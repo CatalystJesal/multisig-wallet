@@ -1,8 +1,11 @@
 pragma solidity 0.8.3;
 pragma abicoder v2;
+import "./SafeMath.sol";
 
 
 contract MultiSigWallet {
+
+    using SafeMath for uint;
 
     mapping(address => bool) private owners;
 
@@ -50,11 +53,12 @@ contract MultiSigWallet {
 
         uint balanceBeforeChange = balance;
 
-        balance += msg.value;
+        balance = balance.add(msg.value);
+        /* balance += msg.value; */
 
         emit deposited(msg.value);
 
-        assert(balance == balanceBeforeChange + msg.value);
+        assert(balance == balanceBeforeChange.add(msg.value));
 
         return balance;
     }
@@ -84,7 +88,8 @@ contract MultiSigWallet {
         require(signersMapping[msg.sender][_index] == false, "The transaction can't be signed twice");
 
         signersMapping[msg.sender][_index] = true;
-        transactions[_index].approvals += 1;
+        transactions[_index].approvals = transactions[_index].approvals.add(1);
+        /* transactions[_index].approvals += 1; */
 
         if(transactions[_index].approvals >= approvalLimit){
             processTransaction(transactions[_index]);
@@ -101,11 +106,12 @@ contract MultiSigWallet {
 
             transaction.status = "approved";
 
-        assert(balance == balanceBeforeChange - transaction.amount);
+        assert(balance == balanceBeforeChange.sub(transaction.amount));
     }
 
     function _transfer(address _to, uint _amount) private {
-        balance -= _amount;
+        balance = balance.sub(_amount);
+        /* balance -= _amount; */
         payable(_to).transfer(_amount);
 
         emit transferProcessed(_to, _amount);
