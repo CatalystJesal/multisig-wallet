@@ -54,7 +54,6 @@ contract MultiSigWallet {
         uint balanceBeforeChange = balance;
 
         balance = balance.add(msg.value);
-        /* balance += msg.value; */
 
         emit deposited(msg.value);
 
@@ -89,7 +88,6 @@ contract MultiSigWallet {
 
         signersMapping[msg.sender][_index] = true;
         transactions[_index].approvals = transactions[_index].approvals.add(1);
-        /* transactions[_index].approvals += 1; */
 
         if(transactions[_index].approvals >= approvalLimit){
             processTransaction(transactions[_index]);
@@ -111,7 +109,6 @@ contract MultiSigWallet {
 
     function _transfer(address _to, uint _amount) private {
         balance = balance.sub(_amount);
-        /* balance -= _amount; */
         payable(_to).transfer(_amount);
 
         emit transferProcessed(_to, _amount);
